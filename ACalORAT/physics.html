@@ -50,7 +50,7 @@
 
             <h2>Contents</h2>
             <ul>
-  <li><a href="#all-the-methods-inherited-by-the-anaorm-class-clasified-into-different-files-depending-one-their-function">All the methods inherited by the AnaORM class clasified into different files depending one their function.</a></li>
+  <li><a href="#analytical-formula-library">Analytical formula library</a></li>
 </ul>
 
 
@@ -78,20 +78,32 @@
                     <h1 class="modulename">
 <a href="./../ACalORAT.html">ACalORAT</a><wbr>.physics    </h1>
 
-                        <div class="docstring"><h1 id="all-the-methods-inherited-by-the-anaorm-class-clasified-into-different-files-depending-one-their-function">All the methods inherited by the AnaORM class clasified into different files depending one their function.</h1>
+                        <div class="docstring"><h1 id="analytical-formula-library">Analytical formula library</h1>
 
-<p>By files:</p>
+<p>The closed-form formulas behind <code><a href="../ACalORAT.html">ACalORAT</a></code>, split into mixin classes that are all
+inherited by <code><a href="AnaORM.html#AnaORM">ACalORAT.AnaORM.AnaORM</a></code> (you normally reach them through the
+high-level wrappers in <code><a href="ana_utils.html">ACalORAT.ana_utils</a></code>, not directly).</p>
 
-<pre><code>BaseInegrals: All integrals used by other methods.
+<p>By module:</p>
 
-ORM: Analytical formulas for the ORM.
+<ul>
+<li><strong><code>BaseIntegrals</code></strong> — elementary phase-advance sums and thick-element kick
+integrals shared by every other module, plus the broadcasting bookkeeping.</li>
+<li><strong><code>ORM</code></strong> — the Orbit Response Matrix itself (thin and thick correctors, with
+and without the housing magnet's quadrupolar moment).</li>
+<li><strong><code>dORM_dq</code></strong> — Jacobian of the ORM with respect to quadrupole gradient (K1),
+for pure quadrupoles and CFDs.</li>
+<li><strong><code>dORM_dh</code></strong> — Jacobian of the ORM with respect to a magnet's dipolar kick
+(B[0]) under active Cor_SVD orbit + RF feedback, including the dispersion,
+energy and sextupole-feed-down channels that source excites.</li>
+<li><strong><code>Dispersion</code></strong> — momentum dispersion and its derivative with respect to a
+quadrupole gradient.</li>
+<li><strong><code>Chromatics</code></strong> — energy dependence of the ORM (dR/dδ) and the associated
+closed-orbit-distortion terms.</li>
+</ul>
 
-dORM: Analytical formulas for the jacobian of the ORM with respect to changing a quadrupole.
-
-Dispersion: Analytical formulas for dispersion.
-
-Chromatics: Analytical formulas for chromatic effects in general.
-</code></pre>
+<p>The derivations of these formulas are collected in the accompanying
+derivations note (PDF); this package is the implementation.</p>
 </div>
 
                         <input id="mod-physics-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
@@ -99,22 +111,31 @@ Chromatics: Analytical formulas for chromatic effects in general.
                         <label class="view-source-button" for="mod-physics-view-source"><span>View Source</span></label>
 
                         <div class="pdoc-code codehilite"><pre><span></span><span id="L-1"><a href="#L-1"><span class="linenos"> 1</span></a><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="L-2"><a href="#L-2"><span class="linenos"> 2</span></a><span class="sd">#All the methods inherited by the AnaORM class clasified into different files depending one their function.</span>
+</span><span id="L-2"><a href="#L-2"><span class="linenos"> 2</span></a><span class="sd"># Analytical formula library</span>
 </span><span id="L-3"><a href="#L-3"><span class="linenos"> 3</span></a>
-</span><span id="L-4"><a href="#L-4"><span class="linenos"> 4</span></a><span class="sd">By files:</span>
-</span><span id="L-5"><a href="#L-5"><span class="linenos"> 5</span></a><span class="sd">    </span>
-</span><span id="L-6"><a href="#L-6"><span class="linenos"> 6</span></a><span class="sd">    BaseInegrals: All integrals used by other methods.</span>
-</span><span id="L-7"><a href="#L-7"><span class="linenos"> 7</span></a><span class="sd">    </span>
-</span><span id="L-8"><a href="#L-8"><span class="linenos"> 8</span></a><span class="sd">    ORM: Analytical formulas for the ORM.</span>
-</span><span id="L-9"><a href="#L-9"><span class="linenos"> 9</span></a><span class="sd">    </span>
-</span><span id="L-10"><a href="#L-10"><span class="linenos">10</span></a><span class="sd">    dORM: Analytical formulas for the jacobian of the ORM with respect to changing a quadrupole.</span>
-</span><span id="L-11"><a href="#L-11"><span class="linenos">11</span></a><span class="sd">    </span>
-</span><span id="L-12"><a href="#L-12"><span class="linenos">12</span></a><span class="sd">    Dispersion: Analytical formulas for dispersion.</span>
-</span><span id="L-13"><a href="#L-13"><span class="linenos">13</span></a><span class="sd">    </span>
-</span><span id="L-14"><a href="#L-14"><span class="linenos">14</span></a><span class="sd">    Chromatics: Analytical formulas for chromatic effects in general.</span>
-</span><span id="L-15"><a href="#L-15"><span class="linenos">15</span></a><span class="sd">    </span>
-</span><span id="L-16"><a href="#L-16"><span class="linenos">16</span></a><span class="sd">    </span>
-</span><span id="L-17"><a href="#L-17"><span class="linenos">17</span></a><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-4"><a href="#L-4"><span class="linenos"> 4</span></a><span class="sd">The closed-form formulas behind `ACalORAT`, split into mixin classes that are all</span>
+</span><span id="L-5"><a href="#L-5"><span class="linenos"> 5</span></a><span class="sd">inherited by `ACalORAT.AnaORM.AnaORM` (you normally reach them through the</span>
+</span><span id="L-6"><a href="#L-6"><span class="linenos"> 6</span></a><span class="sd">high-level wrappers in `ACalORAT.ana_utils`, not directly).</span>
+</span><span id="L-7"><a href="#L-7"><span class="linenos"> 7</span></a>
+</span><span id="L-8"><a href="#L-8"><span class="linenos"> 8</span></a><span class="sd">By module:</span>
+</span><span id="L-9"><a href="#L-9"><span class="linenos"> 9</span></a>
+</span><span id="L-10"><a href="#L-10"><span class="linenos">10</span></a><span class="sd">- **`BaseIntegrals`** — elementary phase-advance sums and thick-element kick</span>
+</span><span id="L-11"><a href="#L-11"><span class="linenos">11</span></a><span class="sd">  integrals shared by every other module, plus the broadcasting bookkeeping.</span>
+</span><span id="L-12"><a href="#L-12"><span class="linenos">12</span></a><span class="sd">- **`ORM`** — the Orbit Response Matrix itself (thin and thick correctors, with</span>
+</span><span id="L-13"><a href="#L-13"><span class="linenos">13</span></a><span class="sd">  and without the housing magnet&#39;s quadrupolar moment).</span>
+</span><span id="L-14"><a href="#L-14"><span class="linenos">14</span></a><span class="sd">- **`dORM_dq`** — Jacobian of the ORM with respect to quadrupole gradient (K1),</span>
+</span><span id="L-15"><a href="#L-15"><span class="linenos">15</span></a><span class="sd">  for pure quadrupoles and CFDs.</span>
+</span><span id="L-16"><a href="#L-16"><span class="linenos">16</span></a><span class="sd">- **`dORM_dh`** — Jacobian of the ORM with respect to a magnet&#39;s dipolar kick</span>
+</span><span id="L-17"><a href="#L-17"><span class="linenos">17</span></a><span class="sd">  (B[0]) under active Cor_SVD orbit + RF feedback, including the dispersion,</span>
+</span><span id="L-18"><a href="#L-18"><span class="linenos">18</span></a><span class="sd">  energy and sextupole-feed-down channels that source excites.</span>
+</span><span id="L-19"><a href="#L-19"><span class="linenos">19</span></a><span class="sd">- **`Dispersion`** — momentum dispersion and its derivative with respect to a</span>
+</span><span id="L-20"><a href="#L-20"><span class="linenos">20</span></a><span class="sd">  quadrupole gradient.</span>
+</span><span id="L-21"><a href="#L-21"><span class="linenos">21</span></a><span class="sd">- **`Chromatics`** — energy dependence of the ORM (dR/dδ) and the associated</span>
+</span><span id="L-22"><a href="#L-22"><span class="linenos">22</span></a><span class="sd">  closed-orbit-distortion terms.</span>
+</span><span id="L-23"><a href="#L-23"><span class="linenos">23</span></a>
+</span><span id="L-24"><a href="#L-24"><span class="linenos">24</span></a><span class="sd">The derivations of these formulas are collected in the accompanying</span>
+</span><span id="L-25"><a href="#L-25"><span class="linenos">25</span></a><span class="sd">derivations note (PDF); this package is the implementation.</span>
+</span><span id="L-26"><a href="#L-26"><span class="linenos">26</span></a><span class="sd">&quot;&quot;&quot;</span>
 </span></pre></div>
 
 
